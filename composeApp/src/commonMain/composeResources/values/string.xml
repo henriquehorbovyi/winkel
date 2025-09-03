@@ -1,0 +1,5 @@
+<resources>
+    <string name="shopping_list_item_name_cant_be_empty_error">Give your item a name 🤭</string>
+    <string name="shopping_list_item_price_cant_be_zero">I bet this item costs more than that 😬</string>
+    <string name="shopping_list_item_price_cant_be_negative">Product with negative value? 👀</string>
+</resources>
