@@ -10,20 +10,20 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ShoppingListDao {
 
-    @Query("SELECT * FROM shopping_list")
+    @Query("select * from shopping_list order by id desc")
     fun getAll(): Flow<List<ShoppingListEntity>>
 
-    @Query("SELECT * FROM shopping_list WHERE id = :id")
-    fun getById(id: Long): ShoppingListEntity
+    @Query("select * from shopping_list where id = :id")
+    suspend fun getById(id: Long): ShoppingListEntity
 
     @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
-    fun insert(shopping: ShoppingListEntity)
+    suspend fun insert(shopping: ShoppingListEntity)
 
-    @Update
-    fun update(shopping: ShoppingListEntity)
+    @Query("update shopping_list set name = :name where id = :id")
+    suspend fun update(id: Long, name: String)
 
     @Delete
-    fun delete(shopping: ShoppingListEntity)
+    suspend fun delete(shopping: ShoppingListEntity)
 
     @Query("select * from shopping_list order by id desc limit 1")
     fun getLastInserted(): ShoppingListEntity

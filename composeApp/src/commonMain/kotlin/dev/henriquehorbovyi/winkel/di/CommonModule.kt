@@ -1,10 +1,14 @@
 package dev.henriquehorbovyi.winkel.di
 
 import androidx.lifecycle.SavedStateHandle
+import dev.henriquehorbovyi.winkel.core.DecimalFormat
+import dev.henriquehorbovyi.winkel.core.PreferenceViewModel
+import dev.henriquehorbovyi.winkel.core.MoneyConverter
 import dev.henriquehorbovyi.winkel.data.local.AppDatabase
 import dev.henriquehorbovyi.winkel.data.local.item.ShoppingItemDao
 import dev.henriquehorbovyi.winkel.data.local.shoppings.ShoppingListDao
 import dev.henriquehorbovyi.winkel.data.repository.IShoppingRepository
+import dev.henriquehorbovyi.winkel.data.repository.PreferencesRepository
 import dev.henriquehorbovyi.winkel.data.repository.ShoppingRepository
 import dev.henriquehorbovyi.winkel.screen.home.viewmodel.HomeViewModel
 import dev.henriquehorbovyi.winkel.screen.shopping.viewmodel.ShoppingViewModel
@@ -13,11 +17,20 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val commonModule = module {
+    single { DecimalFormat() }
+    single { MoneyConverter(get<DecimalFormat>()) }
     single<ShoppingItemDao> { get<AppDatabase>().shoppingItemDao() }
     single<ShoppingListDao> { get<AppDatabase>().shoppingListDao() }
     single<IShoppingRepository> { ShoppingRepository(get(), get()) }
-    viewModel { (savedStateHandle: SavedStateHandle) -> ShoppingViewModel(savedStateHandle, get<IShoppingRepository>()) }
-    viewModel { HomeViewModel(get<IShoppingRepository>()) }
+    viewModel { (savedStateHandle: SavedStateHandle) ->
+        ShoppingViewModel(
+            savedStateHandle = savedStateHandle,
+            shoppingRepository = get<IShoppingRepository>(),
+            moneyConverter = get<MoneyConverter>()
+        )
+    }
+    viewModel { HomeViewModel(get<PreferencesRepository>(), get<IShoppingRepository>()) }
+    viewModel { PreferenceViewModel(get<PreferencesRepository>()) }
 }
 
 expect fun platformModule(): Module

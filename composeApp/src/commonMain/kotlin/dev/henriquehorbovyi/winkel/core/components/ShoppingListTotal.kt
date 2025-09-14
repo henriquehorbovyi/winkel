@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ShoppingListTotal(
-    totalPrice: Double,
+    totalPrice: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -27,7 +27,7 @@ fun ShoppingListTotal(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "Total: R$$totalPrice",
+            text = "Total: $totalPrice",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.End,

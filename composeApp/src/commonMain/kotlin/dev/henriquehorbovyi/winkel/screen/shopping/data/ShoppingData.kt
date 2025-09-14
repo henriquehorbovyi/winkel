@@ -1,22 +1,25 @@
 package dev.henriquehorbovyi.winkel.screen.shopping.data
 
+import dev.henriquehorbovyi.winkel.core.MoneyConverter
 import dev.henriquehorbovyi.winkel.data.local.item.ShoppingItemEntity
 import org.jetbrains.compose.resources.StringResource
 
 data class ShoppingItem(
     val id: Long? = null,
     val name: String,
-    val quantity: Int,
+    val quantity: Int = 1,
     val price: Double,
+    val maskedPrice: String, // for the UI representation (R$ 2,0)
     val isBought: Boolean,
     val shoppingListId: Long? = null,
-    val isTemporary: Boolean = false,
+    val isEditing: Boolean = false,
 )
 
-fun ShoppingItemEntity.toItem() = ShoppingItem(
+fun ShoppingItemEntity.toItem(converter: MoneyConverter) = ShoppingItem(
     id = id,
     name = name,
     quantity = quantity,
+    maskedPrice = converter.formatAsCurrency(price),
     price = price,
     isBought = isBought,
     shoppingListId = shoppingListId
@@ -36,11 +39,18 @@ fun ShoppingItem.toEntity(): ShoppingItemEntity {
 
 
 sealed interface ShoppingAction {
+    data class OnShoppingItemChanged(val item: ShoppingItem) : ShoppingAction
+    data class EditItem(val itemIndex: Int) : ShoppingAction
+    data class OnEditingItemChanged(val index: Int, val item: ShoppingItem) : ShoppingAction
+    data class UpdateItem(val item: ShoppingItem) : ShoppingAction
     data class SaveItem(val item: ShoppingItem) : ShoppingAction
+    data class ConfirmRemoveItem(val item: ShoppingItem) : ShoppingAction
     data class RemoveItem(val item: ShoppingItem) : ShoppingAction
     data class MarkAsBought(val item: ShoppingItem, val isBought: Boolean) : ShoppingAction
-    object AddItem : ShoppingAction
-    object CancelEditing : ShoppingAction
+    data class CancelEditing(val itemIndex: Int) : ShoppingAction
+    data class OnEditShoppingListName(val name: String) : ShoppingAction
+    data class SaveShoppingListName(val name: String) : ShoppingAction
+    object StartEditingShoppingListName : ShoppingAction
 }
 
 sealed interface ShoppingState {
@@ -51,12 +61,20 @@ sealed interface ShoppingState {
 
 data class ShoppingData(
     val items: List<ShoppingItem>,
-    val totalPrice: Double,
+    val totalPrice: String,
     val shoppingListName: String,
+    val editingShoppingItem: ShoppingItem? = null,
+    val isEditingShoppingListName: Boolean = false,
+    val currentNewShoppingItem: ShoppingItem = ShoppingItem(
+        name = "",
+        maskedPrice = "",
+        isBought = false,
+        price = 0.0
+    )
 )
 
 sealed interface ShoppingNavigationEvent {
-    object ClearForm : ShoppingNavigationEvent
     data class ErrorMessage(val messageRes: StringResource) : ShoppingNavigationEvent
+    data class ConfirmRemoveItem(val item: ShoppingItem) : ShoppingNavigationEvent
     object NavigateBack : ShoppingNavigationEvent
 }

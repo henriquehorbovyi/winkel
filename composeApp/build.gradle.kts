@@ -5,12 +5,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.serialization)
     id("kotlin-parcelize")
 }
 
@@ -50,6 +50,11 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+            // Datastore
+            implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.androidx.datastore.preferences)
+
             // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose)

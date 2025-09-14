@@ -2,4 +2,10 @@
     <string name="shopping_list_item_name_cant_be_empty_error">Give your item a name 🤭</string>
     <string name="shopping_list_item_price_cant_be_zero">I bet this item costs more than that 😬</string>
     <string name="shopping_list_item_price_cant_be_negative">Product with negative value? 👀</string>
+
+    <string name="confirm_delete_shopping_list">Delete shopping list?</string>
+    <string name="confirm_delete_shopping_item">Delete shopping item?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
 </resources>

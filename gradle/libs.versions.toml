@@ -17,9 +17,9 @@ ksp = "2.2.10-2.0.2"
 navigationCompose = "2.9.0-rc01"
 sqlite = "2.5.2"
 androidx-room = "2.7.2"
-kotlinxSerializationJson = "1.8.0-RC"
-
-
+kotlinxSerializationJson = "1.9.0"
+datastorePreferences = "1.1.7"
+datastorePreferencesCore = "1.1.7"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -41,6 +41,8 @@ koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-view
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-lifecycle-savedstate = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
 
+androidx-datastore-preferences-core = { module = "androidx.datastore:datastore-preferences-core", version.ref = "datastorePreferencesCore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }

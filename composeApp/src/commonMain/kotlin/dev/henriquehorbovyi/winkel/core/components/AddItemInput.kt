@@ -19,17 +19,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import dev.henriquehorbovyi.winkel.screen.shopping.data.ShoppingItem
 import org.jetbrains.compose.resources.painterResource
@@ -41,23 +35,11 @@ import winkel.composeapp.generated.resources.ic_send
 @Composable
 fun AddItemInput(
     modifier: Modifier = Modifier,
+    shoppingItem: ShoppingItem,
+    onShoppingItemChange: (ShoppingItem) -> Unit,
     onSaveItem: (ShoppingItem) -> Unit,
-    formShouldBeCleared: Boolean,
 ) {
-    var name by remember { mutableStateOf("") }
-    var price: String? by remember { mutableStateOf(null) }
-    var quantity: String by remember { mutableStateOf("1") }
-
-    LaunchedEffect(formShouldBeCleared) {
-        if (formShouldBeCleared) {
-            name = ""
-            price = ""
-            quantity = "1"
-        }
-    }
-
     Column(modifier = modifier.padding(8.dp)) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -71,8 +53,8 @@ fun AddItemInput(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextField(
-                    value = name,
-                    onValueChange = { name = it },
+                    value = shoppingItem.name,
+                    onValueChange = { onShoppingItemChange(shoppingItem.copy(name = it)) },
                     label = {
                         Text(
                             "Item",
@@ -85,81 +67,25 @@ fun AddItemInput(
                             .weight(1f),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     singleLine = true,
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            errorContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            errorIndicatorColor = Color.Transparent,
-                        ),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        errorContainerColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
+                    ),
                 )
-
-                TextField(
-                    value = price.orEmpty(),
-                    onValueChange = { price = it },
-                    placeholder = { Text("$0,00") },
-                    label = {
-                        Text(
-                            "Price",
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions =
-                        KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                            keyboardType = KeyboardType.Number,
-                        ),
-                    singleLine = true,
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            errorContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            errorIndicatorColor = Color.Transparent,
-                        ),
+                MoneyInput(
+                    value = shoppingItem.maskedPrice,
+                    onValueChange = { onShoppingItemChange(shoppingItem.copy(maskedPrice = it)) }
                 )
-
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.LightGray.copy(alpha = 0.5f))
-                        .padding(4.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(Res.drawable.ic_arrow_left),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(32.dp)
-                            .clickable {
-                                quantity = (quantity.toIntOrNull() ?: 0).minus(1).toString()
-                            }
-                            .padding(4.dp),
-                        contentDescription = null
-                    )
-                    Text(quantity, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
-                    Icon(
-                        painterResource(Res.drawable.ic_arrow_right),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(32.dp)
-                            .clickable {
-                                quantity = (quantity.toIntOrNull() ?: 0).plus(1).toString()
-                            }
-                            .padding(4.dp),
-                        contentDescription = null
-                    )
-                }
+                QuantitySelector(
+                    shoppingItem = shoppingItem,
+                    onShoppingItemChange = onShoppingItemChange
+                )
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -168,16 +94,7 @@ fun AddItemInput(
                 modifier = Modifier
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary),
-                onClick = {
-                    onSaveItem(
-                        ShoppingItem(
-                            name = name,
-                            price = price?.toDoubleOrNull() ?: 0.0,
-                            quantity = quantity.toInt(),
-                            isBought = false,
-                        )
-                    )
-                },
+                onClick = { onSaveItem(shoppingItem) },
                 content = {
                     Icon(
                         painterResource(Res.drawable.ic_send),

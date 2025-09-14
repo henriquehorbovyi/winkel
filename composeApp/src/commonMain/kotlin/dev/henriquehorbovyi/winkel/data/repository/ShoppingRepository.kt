@@ -8,8 +8,6 @@ import dev.henriquehorbovyi.winkel.data.local.shoppings.ShoppingListEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -18,7 +16,7 @@ interface IShoppingRepository {
     suspend fun getAllShoppings(): Flow<List<ShoppingListEntity>>
     suspend fun getById(shoppingId: Long): ShoppingListEntity
     suspend fun saveShopping(shoppingList: ShoppingListEntity)
-    suspend fun updateShopping(shoppingList: ShoppingListEntity)
+    suspend fun updateShopping(shoppingId: Long, name: String)
     suspend fun deleteShopping(shoppingList: ShoppingListEntity)
 
     suspend fun lastInsertedShopping(): ShoppingListEntity
@@ -51,13 +49,15 @@ class ShoppingRepository(
             shoppingListDao.insert(shoppingList)
         }
 
-    override suspend fun updateShopping(shoppingList: ShoppingListEntity) =
+    override suspend fun updateShopping(shoppingId: Long, name: String) {
         withContext(Dispatchers.IO) {
-            shoppingListDao.update(shoppingList)
+            shoppingListDao.update(shoppingId, name)
         }
+    }
 
     override suspend fun deleteShopping(shoppingList: ShoppingListEntity) =
         withContext(Dispatchers.IO) {
+            shoppingItemDao.deleteAllItems(shoppingList.id)
             shoppingListDao.delete(shoppingList)
         }
 
